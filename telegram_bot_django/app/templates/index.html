@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="container py-5 text-center">
+        <p>Msg from server:  <strong id="msg">waiting...</strong></p>
+        <button id="startBtn" class="btn btn-primary btn-sm my-5">Start</button>
+        <button id="stopBtn" class="btn btn-danger btn-sm my-5">Stop</button>
+    </div>
+
+    <script>
+        const chatSocket = new WebSocket('ws://'+ window.location.host + '/start/bot/');
+        
+        chatSocket.onmessage = function (e) {
+            const messageParagraph = document.querySelector('#msg');
+            const data = JSON.parse(e.data);
+            messageParagraph.innerHTML = data.message 
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#startBtn').onclick = function (e) {
+            chatSocket.send(JSON.stringify({
+                'message': "start-bot"
+            }));
+        };
+
+        document.querySelector('#stopBtn').onclick = function (e) {
+            chatSocket.send(JSON.stringify({
+                'message': "stop-bot"
+            }));
+        };
+    </script>
+</body>
+
+</html>
